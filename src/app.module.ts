@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { ContentModule } from './content/content.module';
+import { Content } from './content/entities/content.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -12,10 +15,11 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      entities: [],
+      entities: [Content],
       synchronize: true,
     }),
     AuthModule,
+    ContentModule,
   ],
   controllers: [],
   providers: [],
