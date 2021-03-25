@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ContentModule } from './content/content.module';
 import { Content } from './content/entities/content.entity';
+import { Game } from './game/entities/game.entity';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -15,11 +17,12 @@ import { Content } from './content/entities/content.entity';
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      entities: [Content],
+      entities: [Content, Game],
       synchronize: true,
     }),
     AuthModule,
     ContentModule,
+    GameModule,
   ],
   controllers: [],
   providers: [],
