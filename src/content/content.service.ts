@@ -1,34 +1,32 @@
+import { PrismaService } from './../prisma.service';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
-import { Content } from './entities/content.entity';
 
 @Injectable()
 export class ContentService {
-  constructor(
-    @InjectRepository(Content)
-    private readonly contentRepository: Repository<Content>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createContentDto: CreateContentDto) {
-    return await this.contentRepository.save(createContentDto);
+    return this.prisma.content.create({ data: createContentDto });
   }
 
   async findAll() {
-    return await this.contentRepository.find();
+    return this.prisma.content.findMany();
   }
 
   async findOne(id: number) {
-    return await this.contentRepository.findOneOrFail({ id });
+    return this.prisma.content.findFirst({ where: { id } });
   }
 
   async update(id: number, updateContentDto: UpdateContentDto) {
-    return await this.contentRepository.update(id, updateContentDto);
+    return this.prisma.content.update({
+      where: { id },
+      data: updateContentDto,
+    });
   }
 
   async remove(id: number) {
-    return await this.contentRepository.delete({ id });
+    return this.prisma.content.delete({ where: { id } });
   }
 }

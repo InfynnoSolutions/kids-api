@@ -8,37 +8,62 @@ import {
   Delete,
 } from '@nestjs/common';
 import { GameService } from './game.service';
-import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Game as GameModal } from '.prisma/client';
 
 @ApiTags('Game')
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
 
+  @ApiOperation({ summary: 'Create Game' })
   @Post()
-  create(@Body() createGameDto: CreateGameDto) {
-    return this.gameService.create(createGameDto);
+  async create(
+    @Body() gameData: { level: number; type: string; content: number },
+  ): Promise<GameModal> {
+    const { level, type, content } = gameData;
+    return this.gameService.create({
+      level: Number(level),
+      type,
+      content: {
+        connect: { id: Number(content) },
+      },
+    });
   }
 
   @Get()
   findAll() {
-    return this.gameService.findAll();
+    return this.gameService.findAll({ include: { content: true } });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gameService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.gameService.findOne({
+      where: { id: +id },
+      include: { content: true },
+    });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
-    return this.gameService.update(+id, updateGameDto);
+  async update(
+    @Param('id') id: number,
+    @Body() gameData: { level: number; type: string; content: number },
+  ): Promise<GameModal> {
+    const { level, type, content } = gameData;
+    return this.gameService.update({
+      where: { id: +id },
+      data: {
+        level: Number(level),
+        type,
+        content: {
+          connect: { id: Number(content) },
+        },
+      },
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gameService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.gameService.remove({ id: +id });
   }
 }

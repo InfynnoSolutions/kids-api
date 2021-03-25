@@ -1,34 +1,53 @@
+import { PrismaService } from './../prisma.service';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
-import { Game } from './entities/game.entity';
+import { Prisma } from '.prisma/client';
 
 @Injectable()
 export class GameService {
-  constructor(
-    @InjectRepository(Game)
-    protected readonly gameRepository: Repository<Game>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createGameDto: CreateGameDto) {
-    return await this.gameRepository.save(createGameDto);
+  async create(data: Prisma.GameCreateInput) {
+    return this.prisma.game.create({
+      data,
+    });
   }
 
-  async findAll() {
-    return await this.gameRepository.find();
+  async findAll(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.GameWhereUniqueInput;
+    where?: Prisma.GameWhereInput;
+    orderBy?: Prisma.GameOrderByInput;
+    include?: Prisma.GameInclude;
+  }) {
+    const { skip, take, cursor, where, orderBy, include } = params;
+    return this.prisma.game.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+      include,
+    });
   }
 
-  async findOne(id: number) {
-    return await this.gameRepository.findOneOrFail({ id });
+  async findOne(params: {
+    where: Prisma.GameWhereUniqueInput;
+    include?: Prisma.GameInclude;
+  }) {
+    const { where, include } = params;
+    return this.prisma.game.findFirst({ where, include });
   }
 
-  async update(id: number, updateGameDto: UpdateGameDto) {
-    return await this.gameRepository.update(id, updateGameDto);
+  async update(params: {
+    where: Prisma.GameWhereUniqueInput;
+    data: Prisma.GameUpdateInput;
+  }) {
+    const { data, where } = params;
+    return this.prisma.game.update({ data, where });
   }
 
-  async remove(id: number) {
-    return await this.gameRepository.delete({ id });
+  async remove(where: Prisma.GameWhereUniqueInput) {
+    return this.prisma.game.delete({ where });
   }
 }

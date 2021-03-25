@@ -1,0 +1,26 @@
+-- CreateTable
+CREATE TABLE `Content` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `en` VARCHAR(191) NOT NULL,
+    `fr` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+UNIQUE INDEX `Content.en_unique`(`en`),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Game` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `contentId` INTEGER NOT NULL,
+    `level` INTEGER NOT NULL DEFAULT 1,
+    `type` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Game` ADD FOREIGN KEY (`contentId`) REFERENCES `Content`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

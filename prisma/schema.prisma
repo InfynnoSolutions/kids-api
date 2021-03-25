@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Content {
+  id        Int      @id @default(autoincrement())
+  en        String   @unique
+  fr        String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Game      Game[]
+}
+
+model Game {
+  id        Int      @id @default(autoincrement())
+  content   Content  @relation(fields: [contentId], references: [id])
+  contentId Int
+  level     Int      @default(1)
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
