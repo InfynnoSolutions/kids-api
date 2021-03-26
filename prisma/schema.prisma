@@ -11,20 +11,47 @@ generator client {
 }
 
 model Content {
-  id        Int      @id @default(autoincrement())
-  en        String   @unique
+  id        Int        @id @default(autoincrement())
+  en        String     @unique
   fr        String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   Game      Game[]
+  Question  Question[]
+  Answer    Answer[]
 }
 
 model Game {
+  id        Int        @id @default(autoincrement())
+  content   Content    @relation(fields: [contentId], references: [id])
+  contentId Int
+  level     Int        @default(1)
+  type      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Question  Question[]
+}
+
+model Question {
   id        Int      @id @default(autoincrement())
   content   Content  @relation(fields: [contentId], references: [id])
   contentId Int
-  level     Int      @default(1)
-  type      String
+  image     String?
+  game      Game     @relation(fields: [gameId], references: [id])
+  gameId    Int
+  audio     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Answer    Answer[]
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  content    Content  @relation(fields: [contentId], references: [id])
+  contentId  Int
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
+  correct    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
